@@ -1213,6 +1213,150 @@
   color: #facc15;
 }
 
+.large-answer-card.incorrect {
+  border-color: rgba(244, 63, 94, 0.85);
+  background: radial-gradient(circle at 50% 50%, rgba(136, 19, 55, 0.45) 0%, rgba(30, 10, 20, 0.95) 100%);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.4), inset 0 0 15px rgba(244, 63, 94, 0.15);
+}
+
+.large-answer-card.incorrect .large-card-letter-badge {
+  background: #be123c;
+  color: #ffffff;
+  border-color: #fb7185;
+}
+
+.large-answer-card.incorrect .large-card-status {
+  color: #fecdd3;
+}
+
+/* =========================================================================
+   CLEAR ANSWER VALIDATION BANNER (CORRECT / NOT QUITE)
+   ========================================================================= */
+.answer-validation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 14px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  animation: validation-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: 'Outfit', sans-serif;
+  z-index: 5;
+}
+
+.answer-validation-banner.success {
+  background: radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.22) 0%, rgba(6, 78, 59, 0.45) 100%);
+  border: 2px solid rgba(52, 211, 153, 0.85);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35), inset 0 0 15px rgba(52, 211, 153, 0.15);
+  color: #a7f3d0;
+}
+
+.answer-validation-banner.error {
+  background: radial-gradient(circle at 15% 50%, rgba(244, 63, 94, 0.22) 0%, rgba(136, 19, 55, 0.45) 100%);
+  border: 2px solid rgba(251, 113, 133, 0.85);
+  box-shadow: 0 4px 20px rgba(244, 63, 94, 0.35), inset 0 0 15px rgba(251, 113, 133, 0.15);
+  color: #fecdd3;
+}
+
+.validation-banner-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.answer-validation-banner.success .validation-banner-icon {
+  background: rgba(16, 185, 129, 0.25);
+  border: 1.5px solid #34d399;
+  color: #6ee7b7;
+}
+
+.answer-validation-banner.error .validation-banner-icon {
+  background: rgba(244, 63, 94, 0.25);
+  border: 1.5px solid #fb7185;
+  color: #fda4af;
+}
+
+.validation-banner-text-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: left;
+}
+
+.validation-banner-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.answer-validation-banner.success .validation-banner-title {
+  color: #ecfdf5;
+  text-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+}
+
+.answer-validation-banner.error .validation-banner-title {
+  color: #fff1f2;
+  text-shadow: 0 0 12px rgba(251, 113, 133, 0.6);
+}
+
+.validation-banner-sub {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+.validation-banner-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.answer-validation-banner.success .validation-banner-badge {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.answer-validation-banner.error .validation-banner-badge {
+  background: #be123c;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+}
+
+@keyframes validation-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes banner-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: banner-shake 0.4s ease-in-out;
+}
+
+
 /* =========================================================================
    STAGE 3: HAND-GESTURE ANSWER WRITING SECTION & AIR-WRITING CANVAS
    ========================================================================= */

@@ -9,6 +9,7 @@ import React, {
 import {
   RIDDLES_POOL,
   getNextSessionRiddle,
+  shuffleOptions,
   type RiddleItem,
 } from '../data/riddlesPool'
 
@@ -84,6 +85,7 @@ interface SavedGameState {
   funnyTrapSurvived: boolean
   daresCompleted: Record<string, boolean>
   completedRiddleIds: string[]
+  currentOptions?: string[]
 }
 
 const STORAGE_KEY = 'gesture_escape_arena_save_v8'
@@ -97,6 +99,16 @@ function loadSavedState(): SavedGameState {
       let matchedRiddle = RIDDLES_POOL.find((r) => r.id === data.riddleId)
       if (!matchedRiddle) {
         matchedRiddle = RIDDLES_POOL.find((r) => r.id === 'riddle-mirror') || RIDDLES_POOL[0]
+      }
+
+      let currentOptions = data.currentOptions
+      if (
+        !currentOptions ||
+        !Array.isArray(currentOptions) ||
+        currentOptions.length !== 4 ||
+        !matchedRiddle.options.every((opt) => currentOptions!.includes(opt))
+      ) {
+        currentOptions = shuffleOptions(matchedRiddle.options)
       }
 
       const scoreNum = Number(data.coinCatcherHighScore) || 0
@@ -114,6 +126,7 @@ function loadSavedState(): SavedGameState {
         funnyTrapSurvived: Boolean(data.funnyTrapSurvived),
         daresCompleted: data.daresCompleted || {},
         completedRiddleIds: Array.isArray(data.completedRiddleIds) ? data.completedRiddleIds : [],
+        currentOptions,
       }
     }
   } catch (e) {
@@ -135,6 +148,7 @@ function loadSavedState(): SavedGameState {
     funnyTrapSurvived: false,
     daresCompleted: {},
     completedRiddleIds: [],
+    currentOptions: shuffleOptions(initialRiddle.options),
   }
 }
 
@@ -197,9 +211,23 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const [currentView, setCurrentView] = useState<GameView>('start')
   const [savedData, setSavedData] = useState<SavedGameState>(() => loadSavedState())
 
-  // Look up current riddle from pool
-  const currentRiddle =
+  // Look up current riddle from pool and apply randomized options if stored
+  const baseRiddle =
     RIDDLES_POOL.find((r) => r.id === savedData.riddleId) || RIDDLES_POOL[0]
+
+  const currentRiddle = React.useMemo(() => {
+    if (
+      savedData.currentOptions &&
+      savedData.currentOptions.length === 4 &&
+      baseRiddle.options.every((opt) => savedData.currentOptions!.includes(opt))
+    ) {
+      return {
+        ...baseRiddle,
+        options: savedData.currentOptions,
+      }
+    }
+    return baseRiddle
+  }, [baseRiddle, savedData.currentOptions])
 
   // Sync to localStorage whenever savedData changes
   useEffect(() => {
@@ -363,6 +391,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       savedData.completedRiddleIds || [],
       savedData.riddleId
     )
+    const randomizedOptions = shuffleOptions(nextRiddle.options)
     const fresh: SavedGameState = {
       riddleId: nextRiddle.id,
       hints: getHintsForRiddle(nextRiddle),
@@ -377,6 +406,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       funnyTrapSurvived: false,
       daresCompleted: savedData.daresCompleted,
       completedRiddleIds: savedData.completedRiddleIds || [],
+      currentOptions: randomizedOptions,
     }
     setSavedData(fresh)
     persistState(fresh)
@@ -404,6 +434,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       savedData.completedRiddleIds || [],
       savedData.riddleId
     )
+    const randomizedOptions = shuffleOptions(nextRiddle.options)
     const fresh: SavedGameState = {
       riddleId: nextRiddle.id,
       hints: getHintsForRiddle(nextRiddle),
@@ -418,6 +449,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       funnyTrapSurvived: false,
       daresCompleted: savedData.daresCompleted,
       completedRiddleIds: savedData.completedRiddleIds || [],
+      currentOptions: randomizedOptions,
     }
     setSavedData(fresh)
     persistState(fresh)
@@ -429,6 +461,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       ? getNextSessionRiddle(savedData.completedRiddleIds || [], savedData.riddleId)
       : currentRiddle
 
+    const randomizedOptions = shuffleOptions(nextRiddle.options)
     const fresh: SavedGameState = {
       riddleId: nextRiddle.id,
       hints: getHintsForRiddle(nextRiddle),
@@ -443,6 +476,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
       funnyTrapSurvived: false,
       daresCompleted: savedData.daresCompleted,
       completedRiddleIds: savedData.completedRiddleIds || [],
+      currentOptions: randomizedOptions,
     }
     setSavedData(fresh)
     persistState(fresh)

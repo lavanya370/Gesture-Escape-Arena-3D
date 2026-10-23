@@ -1,7 +1,7 @@
 function assert(condition: unknown, msg: string): asserts condition {
   if (!condition) throw new Error(msg)
 }
-import { RIDDLES_POOL } from '../data/riddlesPool'
+import { RIDDLES_POOL, shuffleOptions } from '../data/riddlesPool'
 
 console.log('=== TEST SUITE: Riddle Option Distribution & Answer Validation ===\n')
 
@@ -19,8 +19,22 @@ RIDDLES_POOL.forEach((riddle, idx) => {
   assert(riddle.id && riddle.id.length > 0, `Riddle ${idx} must have valid id`)
   assert(riddle.title && riddle.title.length > 0, `Riddle ${riddle.id} must have valid title`)
   assert(riddle.question && riddle.question.length > 0, `Riddle ${riddle.id} must have valid question`)
+  assert(riddle.storyIntro && riddle.storyIntro.length > 0, `Riddle ${riddle.id} must have valid storyIntro`)
   assert(Array.isArray(riddle.options) && riddle.options.length === 4, `Riddle ${riddle.id} must have 4 options`)
   assert(riddle.correctAnswer && riddle.correctAnswer.length > 0, `Riddle ${riddle.id} must have correctAnswer`)
+
+  // Check that the Case Report (storyIntro) does NOT directly contain the correct answer word
+  const answerWordRegex = new RegExp(`\\b${riddle.correctAnswer.trim()}\\b`, 'i')
+  assert(
+    !answerWordRegex.test(riddle.storyIntro),
+    `Riddle ${riddle.id} storyIntro must NOT contain the correct answer "${riddle.correctAnswer}"!`
+  )
+
+  // Check that the title does NOT directly contain the correct answer word
+  assert(
+    !answerWordRegex.test(riddle.title),
+    `Riddle ${riddle.id} title must NOT contain the correct answer "${riddle.correctAnswer}"!`
+  )
 
   // Check uniqueness of 4 options
   const uniqueOptions = new Set(riddle.options.map((o) => o.trim().toUpperCase()))
@@ -125,6 +139,40 @@ RIDDLES_POOL.forEach((riddle, idx) => {
 })
 
 console.log('✓ PASS: All 19 riddles accurately validated for correct and incorrect answers!')
+
+// 7. Test Option Randomization (shuffleOptions) and Validation with Shuffled Options
+console.log('\nTesting Option Randomization & Shuffled Option Validation...')
+RIDDLES_POOL.forEach((riddle) => {
+  for (let trial = 0; trial < 10; trial++) {
+    const shuffled = shuffleOptions(riddle.options)
+    assert(shuffled.length === 4, `Shuffled options must maintain length 4`)
+    const set = new Set(shuffled)
+    assert(set.size === 4, `Shuffled options must be unique`)
+    riddle.options.forEach((opt) => {
+      assert(set.has(opt), `Shuffled options must contain original option "${opt}"`)
+    })
+
+    // Test validation with shuffled options
+    const shuffledRiddle = { ...riddle, options: shuffled }
+    const newIdx = shuffled.indexOf(riddle.correctAnswer)
+    assert(newIdx >= 0 && newIdx < 4, `Correct answer must exist in shuffled options`)
+    const newLetter = letters[newIdx]
+
+    // Positive
+    assert(validateAnswer(shuffledRiddle, riddle.correctAnswer), `Target text must validate in shuffled riddle`)
+    assert(validateAnswer(shuffledRiddle, newLetter), `Shuffled letter ${newLetter} must validate`)
+
+    // Negative
+    shuffled.forEach((opt, sIdx) => {
+      if (sIdx !== newIdx) {
+        assert(!validateAnswer(shuffledRiddle, opt), `Wrong option "${opt}" must be rejected`)
+        assert(!validateAnswer(shuffledRiddle, letters[sIdx]), `Wrong letter "${letters[sIdx]}" must be rejected`)
+      }
+    })
+  }
+})
+console.log('✓ PASS: Option randomization preserves all options and validates accurately across all permutations!')
+
 console.log('\n========================================')
-console.log('All Riddle Distribution & Validation Tests PASSED!')
+console.log('All Riddle Distribution, Report Quality & Validation Tests PASSED!')
 console.log('========================================\n')

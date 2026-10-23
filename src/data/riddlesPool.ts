@@ -32,9 +32,9 @@ export interface RiddleItem {
 export const RIDDLES_POOL: RiddleItem[] = [
   {
     id: 'riddle-mirror',
-    title: 'CASE 01: THE ENCHANTED REFLECTION',
+    title: 'CASE 01: THE HAUNTED BALLROOM',
     storyIntro:
-      'In the grand ballroom of Ravenscroft Castle, an ornate glass hangs within an antique gilded frame. It watches all who pass, reproducing every expression in perfect silence, yet keeping nothing of its own.',
+      'Midnight falls upon the grand ballroom of Ravenscroft Castle. Investigators observed an eerie chill surrounding an antique gilded frame mounted along the north wall. Witnesses report an uncanny presence that lingers in the silence of the hall, vanishing into nothingness whenever the room falls completely dark.',
     question:
       'I show you a face, but I possess no eyes of my own.\nI speak no words, but mimic every grimace you make.\nYet the second you walk away, I am completely empty.\nWhat am I?',
     options: ['PORTRAIT', 'CAMERA', 'MIRROR', 'STATUE'],
@@ -68,9 +68,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-shadow',
-    title: 'CASE 01: THE SILENT INTRUDER',
+    title: 'CASE 02: THE SILENT INTRUDER',
     storyIntro:
-      'Midnight strikes at Blackwood Manor. A nervous night guard swears a dark silhouette is glued to his heels through every drafty corridor, mimicking his every frantic move!',
+      'A night guard on patrol through the drafty stone corridors of Blackwood Manor filed an urgent report. He claims an unseen companion trails his steps across the moonlit tiles, leaving no trace behind yet impossible to shake until all lights are extinguished.',
     question:
       'Someone follows you through every room.\nThey mimic your every frantic move,\nyet they vanish the instant the lights go black.\nWho is this silent intruder?',
     options: ['SHADOW', 'GHOST', 'SPY', 'PUPPET'],
@@ -104,9 +104,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-key',
-    title: 'CASE 02: THE FORBIDDEN VAULT',
+    title: 'CASE 03: THE FORBIDDEN VAULT',
     storyIntro:
-      'The eccentric Lord Ravenscroft passed away, leaving his fortune sealed in a gargantuan iron vault. The greedy heirs tore up the mansion, finding only a tiny notched piece of brass!',
+      'The eccentric Lord Ravenscroft passed away, leaving his fortune sealed within an impenetrable underground chamber. The greedy heirs searched every archive and locked cabinet, desperate to locate the single elusive instrument required to operate the vault mechanism.',
     question:
       'I have dozens of teeth, but I never take a bite.\nI can open the heaviest iron gate,\nyet I can never walk through it myself.\nWhat am I?',
     options: ['COMB', 'SAW', 'ZIPPER', 'KEY'],
@@ -140,11 +140,11 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-mirror-smirking',
-    title: 'CASE 03: THE SMIRKING APPARITION',
+    title: 'CASE 04: THE SMIRKING APPARITION',
     storyIntro:
-      'A wealthy art collector claims a demon lives in his dressing room. Every time he adjusts his bow tie, an identical figure stares back with the exact same grin!',
+      'A prominent art collector in the cathedral district contacted investigators regarding an unsettling phenomenon in his private chambers. He insists that whenever illuminated by candlelight, an uncanny optical illusion confronts anyone who stands before the mantelpiece.',
     question:
-      'I show you a face, but I possess no eyes of my own.\nI speak no words, but mimic every grimace you make.\nYet the second you walk away, I am completely empty.\nWhat am I?',
+      'Look into my silver depths and you will see yourself.\nRaise your right hand and I will raise my left.\nI can be shattered into seven years of sorrow,\nyet I hold no memory of yesterday or tomorrow.\nWhat am I?',
     options: ['PORTRAIT', 'MIRROR', 'CAMERA', 'STATUE'],
     correctAnswer: 'MIRROR',
     explanation:
@@ -176,15 +176,15 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-candle',
-    title: 'CASE 04: THE WEEPING MONK',
+    title: 'CASE 05: THE WEEPING MONK',
     storyIntro:
-      'During a thunderstorm blackout in Blackwood Abbey, an investigator spots a glowing white cylinder weeping pale tears in the cold stone chapel.',
+      'During a violent thunderstorm blackout across Blackwood Abbey, curious shifting shadows were reported inside the stone sanctuary. Night watchmen discovered a quiet warmth lingering on the altar, slowly diminishing as the midnight hours ticked by.',
     question:
-      'My life is measured in hours,\nand I serve by being consumed.\nI am tall when young, but grow short when old.\nMy breath brings light,\nbut my tears are made of wax.\nWHAT AM I?',
+      'My life is measured in hours,\nand I serve by being consumed.\nI am tall when young, but grow short when old.\nMy breath brings light,\nand my tears slowly pool as I fade away.\nWhat am I?',
     options: ['HOURGLASS', 'MATCHSTICK', 'CANDLE', 'TORCH'],
     correctAnswer: 'CANDLE',
     explanation:
-      'A candle burns down its wick over hours, growing shorter as it melts paraffin wax into dripping tears.',
+      'A candle burns down its wick over hours, growing shorter as it melts wax into dripping tears.',
     funnyWrongReactions: [
       'A gust of wind howls down the chimney: "A {choice}? That guess burned out faster than a match in a storm!"',
       'The abbey gargoyle chuckles: "Wrong! Keep thinking before all the wax drips away!"',
@@ -204,7 +204,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       },
       hint3: {
         title: 'CLUE 3 • COMPOSITION',
-        text: 'It features a cloth wick embedded in paraffin wax that melts as its flame burns.',
+        text: 'It features a cloth wick embedded in wax that melts as its flame burns.',
         sourceMiniGame: "Guardian's Funny Trap",
         requirement: 'Survive 15s in Trap Arena',
       },
@@ -212,9 +212,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-footsteps',
-    title: 'CASE 05: THE MUDDY TRAIL',
+    title: 'CASE 06: THE MIDNIGHT HEIST',
     storyIntro:
-      'A cat burglar slipped into the greenhouse and snatched the Empress Emerald. Chief Inspector Sterling arrives to find a curious path through the wet soil!',
+      'A cunning thief slipped past the perimeter alarms at the Botanical Conservatory and escaped with the Empress Emerald. Chief Inspector Sterling arrived on the scene, scouring the surrounding grounds for any tangible clue left in the wake of the getaway.',
     question:
       'The more of me you take, the more you leave behind.\nDetectives hunt for me in dust, sand, and mud,\nyet I vanish forever beneath falling rain.\nWhat am I?',
     options: ['FOOTSTEPS', 'BREATHS', 'FINGERPRINTS', 'SHADOWS'],
@@ -248,9 +248,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-echo',
-    title: 'CASE 06: THE CRYPT’S MOCKING WHISPER',
+    title: 'CASE 07: THE CRYPT’S MOCKING WHISPER',
     storyIntro:
-      'Lost in the subterranean catacombs beneath Paris, an urban explorer yells for an exit. A sinister phantom voice repeats every single word right back!',
+      'Explorers charting the labyrinth of forgotten subterranean catacombs beneath the old city reported strange acoustic anomalies. Any sudden noise or call of alarm produced curious reverberations echoing throughout the deep bedrock.',
     question:
       'I have no voice, yet I answer when you shout.\nI speak every language on Earth, but only repeat what is told.\nI cannot be seen, but you will hear me in deep canyons and empty stone halls.\nWhat am I?',
     options: ['GHOST', 'RADIO', 'PARROT', 'ECHO'],
@@ -284,9 +284,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-book',
-    title: 'CASE 07: THE SILENT WITNESS',
+    title: 'CASE 08: THE SILENT WITNESS',
     storyIntro:
-      'Inside the dusty manor library, thousands of silent rectangular artifacts rest on mahogany shelves. The occult detective claims each one holds ancient voices.',
+      'Inside the ancestral manor archives, centuries of guarded secrets rest undisturbed in the quiet shadows. The occult detective believes the crucial clue needed to solve the estate mystery lies waiting on one of the dusty mahogany shelves.',
     question:
       'I have a spine, but no bones.\nI have hundreds of leaves, but no branches or roots.\nI can transport you to ancient realms without ever moving an inch.\nWhat am I?',
     options: ['TREE', 'BOOK', 'SKELETON', 'MAP'],
@@ -320,17 +320,17 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-lock',
-    title: 'CASE 08: THE IRON SENTRY',
+    title: 'CASE 09: THE IRON SENTRY',
     storyIntro:
-      'The escape room chamber door is clamped shut by a heavy bronze apparatus with a U-shaped shackle. A cryptic warning is stamped into its metal belly!',
+      'The escape room chamber exit remains firmly secured, defying all attempts at brute force. A heavy ancient security fixture seals the massive portal, awaiting the precise code or mechanism required to trigger its release.',
     question:
       'I guard great secrets and treasure without a sword or shield.\nI click shut with a satisfying snap,\nand only surrender when fed the right secret teeth or code.\nWhat am I?',
     options: ['SAFE', 'CHAIN', 'LOCK', 'GUARD'],
     correctAnswer: 'LOCK',
     explanation:
-      'A padlock or door lock secures gates and vaults with mechanical tumblers, opening only when turned with the matching key or combination.',
+      'A lock secures gates and vaults with mechanical tumblers, opening only when turned with the matching key or combination.',
     funnyWrongReactions: [
-      'The heavy shackle stays frozen: "*CLICK!* A {choice}? Nope, the latch refuses to budge!"',
+      'The heavy latch stays frozen: "*CLICK!* A {choice}? Nope, the latch refuses to budge!"',
       'A sneaky thief sighs: "If you keep guessing like that, we will be trapped in this escape room forever!"',
     ],
     hints: {
@@ -356,9 +356,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-bottle',
-    title: 'CASE 09: THE CASTAWAY’S MESSAGE',
+    title: 'CASE 10: THE SHORELINE ENIGMA',
     storyIntro:
-      'Washed ashore at Dead Man’s Cove, a sealed glass vessel tumbles in the ocean foam. Inside, a parchment scroll rolled in crimson ribbon bobs against the glass!',
+      'Washed ashore amidst the jagged rocks at Dead Man’s Cove, beachcombers recovered an antique maritime artifact sealed against the brine. Coast guard officers suspect the relic had been adrift across turbulent ocean currents for decades.',
     question:
       'I have a slender neck, but no head.\nI have a hollow glass belly, but no appetite.\nI can keep a desperate secret safe for fifty years across stormy seas.\nWhat am I?',
     options: ['BOTTLE', 'VASE', 'BARREL', 'FLASK'],
@@ -392,9 +392,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-window',
-    title: 'CASE 10: THE TRANSPARENT WALL',
+    title: 'CASE 11: THE TRANSPARENT WALL',
     storyIntro:
-      'In the high tower of Castle Gloom, violent lightning flashes illuminate the stormy forest. Yet inside the study, not a single gust or raindrop touches the parchment!',
+      'In the high observatory of Castle Gloom, violent lightning crackles across the stormy sky. Yet within the study, scholars examine delicate ancient maps in absolute calm, shielded entirely from the howling gale outside.',
     question:
       'I let the bright daylight in, but keep the howling wind outside.\nI am transparent as fresh air, but hard as crystal rock.\nIf you strike me in anger, I shatter into a thousand jagged pieces.\nWhat am I?',
     options: ['CURTAIN', 'MIRROR', 'DOOR', 'WINDOW'],
@@ -428,9 +428,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-spiderweb',
-    title: 'CASE 11: THE WEAVER’S SNARE',
+    title: 'CASE 12: THE WEAVER’S SNARE',
     storyIntro:
-      'In the dusty attic corner above the old wardrobe, a gossamer spiral shimmers in the silver moonlight. Careless moths fly in, but none ever fly back out!',
+      'In the secluded rafters above the abandoned attic, delicate spiral structures hang undisturbed in the stillness. Naturalists marvel at the microscopic tensile strength of the intricate patterns suspended across the high beams.',
     question:
       'I am spun from liquid silk stronger than steel.\nI wait silently in dusty rafters for unsuspecting visitors.\nI am an intricate lace trap, but I have never worn a dress.\nWhat am I?',
     options: ['NET', 'SPIDERWEB', 'HAMMOCK', 'CURTAIN'],
@@ -464,9 +464,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-bell',
-    title: 'CASE 12: THE BELFRY’S GONG',
+    title: 'CASE 13: THE VALLEY CHIME',
     storyIntro:
-      'High in the creaking bell tower, a massive flared bronze sculpture hangs motionless. But when the clock strikes twelve, a deafening ring echoes across the entire valley!',
+      'High atop the ancient clock tower, an immense cast-bronze sculpture has overlooked the valley for over three centuries. Local historians recount how its commanding acoustic presence has sounded for festivals and alarms across generations.',
     question:
       'I have no tongue of flesh, yet I can chime across an entire town.\nI am hollow bronze, with a heavy iron clapper inside my throat.\nI ring for joyous weddings and toll for midnight peril.\nWHAT AM I?',
     options: ['BELL', 'DRUM', 'TRUMPET', 'GONG'],
@@ -500,9 +500,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-fire',
-    title: 'CASE 13: THE HUNGRY BEAST',
+    title: 'CASE 14: THE HUNGRY BEAST',
     storyIntro:
-      'The dungeon keeper warns the recruits about a wild dancing beast kept inside the stone hearth. It devours dry logs by the crate, but a single bucket of water will kill it!',
+      'The fortress sentinel tends to an energetic elemental presence maintained within the central stone hearth. Without steady fuel and constant vigilance, the damp subterranean chill would quickly overcome the mountain bastion.',
     question:
       'Feed me dry wood and paper, and I grow furious and bright.\nGive me a cup of cold water, and I instantly choke and die.\nI have no lungs, but I crackle and dance in the stone hearth.\nWhat am I?',
     options: ['LION', 'VOLCANO', 'FIRE', 'DRAGON'],
@@ -536,9 +536,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-glove',
-    title: 'CASE 14: THE MASTER THIEF’S DISGUISE',
+    title: 'CASE 15: THE ROYAL BURGLARY',
     storyIntro:
-      'Scotland Yard examines the shattered jewel case. The master thief left not a single fingerprint on the velvet cushion, but dropped a curious leather item near the exit!',
+      'Scotland Yard detectives investigated an audacious midnight burglary at the Royal Exchange. Despite inspecting multiple glass display cabinets, forensic specialists found zero fingerprints or dermal traces left anywhere across the crime scene.',
     question:
       'I have four fingers and one thumb,\nbut I have no flesh, bones, or pulse of my own.\nBurglars wear me to leave no trace, and gentlemen wear me against the winter chill.\nWhat am I?',
     options: ['SHADOW', 'SOCK', 'PUPPET', 'GLOVE'],
@@ -572,9 +572,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-map',
-    title: 'CASE 15: THE PIRATE’S CODEX',
+    title: 'CASE 16: THE PIRATE’S CODEX',
     storyIntro:
-      'Buried in a brass canister beneath shipwreck sands, a brittle parchment displays mysterious coastlines and an ominous skull marking an uncharted island!',
+      'Recovered from an iron-bound sea chest salvaged near the coral reef, an ancient document preserves complex cartographic coordinates and cryptic navigational notations from historic voyages.',
     question:
       'I have sprawling cities, but not a single house.\nI have mountains and rivers, but not a rock or a drop of water.\nI guide lost adventurers through uncharted wilderness on a single sheet of paper.\nWhat am I?',
     options: ['GLOBE', 'MAP', 'BOOK', 'COMPASS'],
@@ -608,9 +608,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-compass',
-    title: 'CASE 16: THE GHOST SHIP’S NEEDLE',
+    title: 'CASE 17: THE MARINER’S GUIDE',
     storyIntro:
-      'Aboard the Mary Celeste ghost ship drifting through the fog, a polished brass apparatus sits upon the binnacle, its needle steadily quivering toward the horizon.',
+      'Aboard a derelict schooner discovered drifting through the dense Atlantic fog, boarding officers found no crew at the helm. Yet mounted before the wheel, an undisturbed brass instrument continued to respond faithfully to the unseen forces of the earth.',
     question:
       'I have a spinning needle that never sews a stitch.\nI whisper nothing, yet I tell sailors where North lies.\nNo matter which way you turn, my magnetic heart points the way.\nWhat am I?',
     options: ['CLOCK', 'WEATHERVANE', 'COMPASS', 'SUNDIAL'],
@@ -644,9 +644,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-stairs',
-    title: 'CASE 17: THE SECRET PASSAGEWAY',
+    title: 'CASE 18: THE SECRET PASSAGEWAY',
     storyIntro:
-      'Behind the revolving bookcase in Ravenwood Castle, a spiraling flight of weathered oak leads up into the eerie belfry and down into the creepy dungeon!',
+      'Architectural surveyors exploring the foundations of Ravenwood Castle uncovered an undocumented structural passage behind the library wall, connecting subterranean crypts to the highest rooftop parapets.',
     question:
       'I go up and I go down, but I never move an inch.\nCreaking underfoot during midnight strolls,\nI lead you from the basement dungeon to the highest rooftop tower.\nWhat am I?',
     options: ['STAIRS', 'ELEVATOR', 'LADDER', 'ESCALATOR'],
@@ -680,9 +680,9 @@ export const RIDDLES_POOL: RiddleItem[] = [
   },
   {
     id: 'riddle-coin',
-    title: 'CASE 18: THE TWO-FACED TOKEN',
+    title: 'CASE 19: THE GAMBLER’S WAGER',
     storyIntro:
-      'In a dimly lit speakeasy beneath the docks, a masked gambler slides a gleaming metallic medallion across the green felt: "Call it in the air, stranger!"',
+      'In a dimly lit establishment near the harbor docks, seasoned adventurers gather for high-stakes games of chance. Disputed wagers are traditionally settled by an ancient metallic artifact possessing balanced opposing faces.',
     question:
       'I have a head, but no eyes or brain.\nI have a tail, but no body or fur.\nKings stamp their royal portraits on me, and gamblers flip me to decide their fate.\nWhat am I?',
     options: ['LIZARD', 'SNAKE', 'MEDAL', 'COIN'],
@@ -715,6 +715,19 @@ export const RIDDLES_POOL: RiddleItem[] = [
     },
   },
 ]
+
+/**
+ * Randomizes the 4 answer options using Fisher-Yates shuffle.
+ * Guarantees that all options are preserved and only positions are randomized.
+ */
+export function shuffleOptions(options: string[]): string[] {
+  const shuffled = [...options]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
+}
 
 /**
  * Returns a random riddle from the pool, ensuring it differs from previousId if possible.

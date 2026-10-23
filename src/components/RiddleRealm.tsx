@@ -7,6 +7,7 @@ import { CameraStatusBadge } from './CameraStatusBadge'
 import { gestureDetector } from '../vision/gestureDetector'
 import cryptBg from '../assets/crypt-bg.jpg'
 import { getFunDareForRiddle, type FunDare } from '../data/funDares'
+import { RIDDLES_POOL } from '../data/riddlesPool'
 import {
   verifyDareAction,
   resetActionMotionHistory,
@@ -162,6 +163,25 @@ export const RiddleRealm: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [answerInput, setAnswerInput] = useState<string>('')
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false)
+  const [answerStatus, setAnswerStatus] = useState<'idle' | 'correct' | 'incorrect'>('idle')
+  const [incorrectSelection, setIncorrectSelection] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const isSubmittingRef = useRef<boolean>(false)
+  const wrongDareTimeoutRef = useRef<number | null>(null)
+
+  // Find mystery case index to display sanitized Case File number (never leaks answer)
+  const riddleIndex = RIDDLES_POOL.findIndex((r) => r.id === riddle.id)
+  const caseNum = riddleIndex >= 0 ? String(riddleIndex + 1).padStart(2, '0') : '01'
+
+  // Clean up any pending wrong answer transition timer
+  useEffect(() => {
+    return () => {
+      if (wrongDareTimeoutRef.current) {
+        clearTimeout(wrongDareTimeoutRef.current)
+      }
+    }
+  }, [])
+
 
   // Celebration & Fun Dare states
   const [celebrationActive, setCelebrationActive] = useState<boolean>(isCompleted)
@@ -276,7 +296,7 @@ export const RiddleRealm: React.FC = () => {
   // Handle selecting / submitting an option
   const handleOptionChosen = useCallback(
     (chosen: string) => {
-      if (isCompletedRef.current) return
+      if (isCompletedRef.current || isSubmittingRef.current) return
 
       const now = Date.now()
       if (
@@ -294,6 +314,10 @@ export const RiddleRealm: React.FC = () => {
       const result = submitAnswer(chosen)
 
       if (result.isCorrect) {
+        isSubmittingRef.current = true
+        setIsSubmitting(true)
+        setAnswerStatus('correct')
+        setIncorrectSelection(null)
         sound.playCorrectRiddle()
         sound.playLevelComplete()
         setCelebrationActive(true)
@@ -301,12 +325,21 @@ export const RiddleRealm: React.FC = () => {
         setIsDareCompleted(false)
         setDareHoldProgress(0)
       } else {
+        setAnswerStatus('incorrect')
+        setIncorrectSelection(chosen)
         sound.playWrongAnswer()
         sound.playGuardianDareAlert()
-        resetDareState()
-        setIsFunDareActive(true)
-        setIsDareCompleted(false)
-        setCelebrationActive(false)
+
+        // Give player a brief moment to clearly observe the "NOT QUITE! TRY AGAIN!" feedback before entering Fun Dare
+        if (wrongDareTimeoutRef.current) {
+          clearTimeout(wrongDareTimeoutRef.current)
+        }
+        wrongDareTimeoutRef.current = window.setTimeout(() => {
+          resetDareState()
+          setIsFunDareActive(true)
+          setIsDareCompleted(false)
+          setCelebrationActive(false)
+        }, 1100)
       }
     },
     [submitAnswer, resetDareState]
@@ -316,7 +349,7 @@ export const RiddleRealm: React.FC = () => {
   const handleSubmitInput = useCallback(
     (e?: React.FormEvent) => {
       if (e) e.preventDefault()
-      if (isCompleted || !isOptionsRevealed) return
+      if (isCompleted || !isOptionsRevealed || isSubmittingRef.current) return
 
       const finalGuess = (answerInput.trim() || selectedOption || '').trim()
       if (!finalGuess) return
@@ -342,6 +375,13 @@ export const RiddleRealm: React.FC = () => {
     setIsDareCompleted(false)
     setAnswerInput('')
     setSelectedOption(null)
+    setAnswerStatus('idle')
+    setIncorrectSelection(null)
+    setIsSubmitting(false)
+    isSubmittingRef.current = false
+    if (wrongDareTimeoutRef.current) {
+      clearTimeout(wrongDareTimeoutRef.current)
+    }
   }, [resetDareState])
 
   // Return to Start Screen cleanly resetting temporary session state
@@ -350,6 +390,13 @@ export const RiddleRealm: React.FC = () => {
     resetDareState()
     setSelectedOption(null)
     setAnswerInput('')
+    setAnswerStatus('idle')
+    setIncorrectSelection(null)
+    setIsSubmitting(false)
+    isSubmittingRef.current = false
+    if (wrongDareTimeoutRef.current) {
+      clearTimeout(wrongDareTimeoutRef.current)
+    }
     setCelebrationActive(false)
     setIsFunDareActive(false)
     setIsDareCompleted(false)
@@ -366,6 +413,13 @@ export const RiddleRealm: React.FC = () => {
     startNewRiddleSession()
     setSelectedOption(null)
     setAnswerInput('')
+    setAnswerStatus('idle')
+    setIncorrectSelection(null)
+    setIsSubmitting(false)
+    isSubmittingRef.current = false
+    if (wrongDareTimeoutRef.current) {
+      clearTimeout(wrongDareTimeoutRef.current)
+    }
     setCelebrationActive(false)
     setIsFunDareActive(false)
     setIsDareCompleted(false)
@@ -379,6 +433,13 @@ export const RiddleRealm: React.FC = () => {
     resetGameProgress()
     setSelectedOption(null)
     setAnswerInput('')
+    setAnswerStatus('idle')
+    setIncorrectSelection(null)
+    setIsSubmitting(false)
+    isSubmittingRef.current = false
+    if (wrongDareTimeoutRef.current) {
+      clearTimeout(wrongDareTimeoutRef.current)
+    }
     setCelebrationActive(false)
     setIsFunDareActive(false)
     setIsDareCompleted(false)
@@ -855,7 +916,7 @@ export const RiddleRealm: React.FC = () => {
                   MYSTERY INVESTIGATION
                 </span>
               </div>
-              <span className="case-id-badge">CASE #{riddle.id.toUpperCase()}</span>
+              <span className="case-id-badge">CASE FILE #{caseNum}</span>
             </div>
 
             {/* Crime Scene Report Card */}
@@ -984,12 +1045,36 @@ export const RiddleRealm: React.FC = () => {
                 </div>
               </div>
 
+              {/* Answer Validation Status Banner */}
+              {answerStatus === 'correct' && (
+                <div className="answer-validation-banner success" role="alert">
+                  <span className="validation-banner-icon">✨</span>
+                  <div className="validation-banner-text-group">
+                    <span className="validation-banner-title">CORRECT ANSWER!</span>
+                    <span className="validation-banner-sub">Outstanding deduction! +500 PTS added to your score.</span>
+                  </div>
+                  <span className="validation-banner-badge">+500 PTS</span>
+                </div>
+              )}
+
+              {answerStatus === 'incorrect' && (
+                <div className="answer-validation-banner error animate-shake" role="alert">
+                  <span className="validation-banner-icon">⚡</span>
+                  <div className="validation-banner-text-group">
+                    <span className="validation-banner-title">NOT QUITE! TRY AGAIN!</span>
+                    <span className="validation-banner-sub">That deduction missed the mark. Prepare for the Fun Dare!</span>
+                  </div>
+                  <span className="validation-banner-badge">RETRY</span>
+                </div>
+              )}
+
               {/* STAGE 2: Four Large Clickable Answer Cards (A, B, C, D) in Spacious 2-Column Grid */}
               <div className="options-grid-split large-grid">
                 {riddle.options.map((option, idx) => {
                   const letters = ['A', 'B', 'C', 'D']
                   const letter = letters[idx] || '?'
                   const isSelected = selectedOption === option
+                  const isIncorrect = incorrectSelection === option
                   const isFocused = focusedOptionIndex === idx
                   const cardRef =
                     idx === 0
@@ -1006,19 +1091,21 @@ export const RiddleRealm: React.FC = () => {
                       ref={cardRef}
                       type="button"
                       className={`large-answer-card ${isSelected ? 'selected' : ''} ${
-                        isFocused ? 'hand-focused' : ''
-                      }`}
+                        isIncorrect ? 'incorrect' : ''
+                      } ${isFocused ? 'hand-focused' : ''}`}
                       onClick={() => handleOptionChosen(option)}
                       data-selectable="true"
                       aria-label={`Option ${letter}: ${option}`}
-                      disabled={celebrationActive}
+                      disabled={celebrationActive || isCompleted || isSubmitting}
                     >
                       <div className="large-card-letter-badge">{letter}</div>
                       <div className="large-card-body">
                         <span className="large-card-name">{option}</span>
                         <span className="large-card-status">
                           {isSelected
-                            ? '★ SELECTED'
+                            ? isIncorrect
+                              ? '✗ NOT QUITE'
+                              : '★ SELECTED'
                             : isFocused
                             ? isPinching
                               ? '🤏 PINCHING...'
@@ -1027,7 +1114,7 @@ export const RiddleRealm: React.FC = () => {
                         </span>
                       </div>
                       <span className="large-card-action-icon">
-                        {isSelected ? '✓' : isFocused ? '🖐️' : '→'}
+                        {isSelected ? (isIncorrect ? '✗' : '✓') : isFocused ? '🖐️' : '→'}
                       </span>
                     </button>
                   )
@@ -1065,7 +1152,7 @@ export const RiddleRealm: React.FC = () => {
                   <button
                     type="submit"
                     className="btn-submit-answer-prominent"
-                    disabled={(!answerInput.trim() && !selectedOption) || celebrationActive}
+                    disabled={(!answerInput.trim() && !selectedOption) || celebrationActive || isCompleted || isSubmitting}
                     data-selectable="true"
                   >
                     SUBMIT ANSWER →
@@ -1089,9 +1176,9 @@ export const RiddleRealm: React.FC = () => {
           <div className="fullscreen-celebration-card">
             <div className="celebration-trophy-emblem">🏆</div>
             <div className="celebration-headline-burst">
-              <span className="celebration-wow-tag">AWESOME! CORRECT ANSWER! 🎉</span>
-              <h2 className="celebration-title">YOU DID IT!</h2>
-              <p className="celebration-subtext">Great job! You solved the riddle!</p>
+              <span className="celebration-wow-tag">🎉 CORRECT ANSWER! 🎉</span>
+              <h2 className="celebration-title">MYSTERY SOLVED!</h2>
+              <p className="celebration-subtext">Outstanding deduction! +500 Points awarded to your score.</p>
             </div>
 
             <div className="celebration-answer-badge">
@@ -1192,12 +1279,12 @@ export const RiddleRealm: React.FC = () => {
             <div className="fullscreen-dare-card fun-dare-card">
               {/* Header Badge */}
               <div className="fun-dare-header-burst">
-                <div className="fun-dare-tag-pill">
+                <div className="fun-dare-tag-pill warning">
                   <span className="fun-sparkle-glyph">✦</span>
-                  <span className="fun-tag-text">FUN DARE!</span>
+                  <span className="fun-tag-text">NOT QUITE! TRY AGAIN!</span>
                   <span className="fun-sparkle-glyph">✦</span>
                 </div>
-                <h2 className="fun-dare-main-title">&ldquo;Wrong answer! Here is your Fun Dare!&rdquo;</h2>
+                <h2 className="fun-dare-main-title">&ldquo;Complete the Fun Dare to unlock your retry!&rdquo;</h2>
                 <p className="fun-dare-sub-guidance">
                   Perform the gesture in front of your camera to unlock your retry!
                 </p>
