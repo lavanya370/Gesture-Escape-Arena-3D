@@ -53,6 +53,8 @@ export type HandActionType =
   | 'wave_hands'
   | 'open_palms'
   | 'peace_sign'
+  | 'index_middle'
+  | 'middle_ring'
   | 'point_finger'
   | 'wiggle_fingers'
 

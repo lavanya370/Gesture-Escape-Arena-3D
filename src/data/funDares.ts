@@ -1,16 +1,20 @@
 import type { FunDare } from '../types/riddles'
 export type { FunDare }
 
-
 /**
  * Predefined, unique fun action dares assigned to each existing riddle.
  *
  * Requirements:
  * - Simple English immediately understandable by Class 12 students.
- * - Clear visual icon (emoji) and animation for each dare.
- * - No dance activities or dance-related text.
- * - Each riddle has its own unique, deterministic dare.
- * - Timed dares have a clear countdown (e.g., 5 seconds or 3 seconds).
+ * - Clear visual icon (emoji) and specific gesture verification rule.
+ * - Features diverse finger gestures:
+ *   * Middle finger + ring finger extended together ('middle_ring')
+ *   * Index finger + middle finger extended together ('peace_sign' / 'index_middle')
+ *   * Open palm ('open_palms')
+ *   * Thumbs up ('thumbs_up')
+ *   * Genuine horizontal hand waving ('wave_hands')
+ *   * Pointing, clapping, and finger wiggling
+ * - Each riddle has its own distinct dare.
  */
 export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
   // Riddle 1: The Enchanted Reflection (MIRROR)
@@ -18,8 +22,8 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-1',
     riddleId: 'riddle-mirror',
     riddleNumber: 1,
-    title: 'Fun Dare #1',
-    instruction: 'Clap your hands in front of the camera!',
+    title: 'Fun Dare #1: Guardian Clap',
+    instruction: 'Clap both hands together in front of the camera!',
     icon: '👏',
     hint: 'Bring both hands together in front of the webcam!',
     actionType: 'clap_hands',
@@ -31,11 +35,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-2',
     riddleId: 'riddle-shadow',
     riddleNumber: 2,
-    title: 'Fun Dare #2',
-    instruction: 'Raise both hands high in the air!',
-    icon: '🙌',
-    hint: 'Hold both hands up in view of the webcam!',
-    actionType: 'raise_hands',
+    title: 'Fun Dare #2: Shadow Vanquisher',
+    instruction: 'Give a big thumbs-up to the camera!',
+    icon: '👍',
+    hint: 'Curl your 4 fingers into a fist and point your thumb straight up!',
+    actionType: 'thumbs_up',
     durationSeconds: 0,
   },
 
@@ -44,10 +48,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-3',
     riddleId: 'riddle-key',
     riddleNumber: 3,
-    title: 'Fun Dare #3',
+    title: 'Fun Dare #3: Master Approval',
     instruction: 'Give a big thumbs-up to the camera!',
     icon: '👍',
-    hint: 'Show a clear, proud thumbs-up to the webcam!',
+    hint: 'Curl your 4 fingers into a fist and point your thumb straight up!',
     actionType: 'thumbs_up',
     durationSeconds: 0,
   },
@@ -57,10 +61,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-4',
     riddleId: 'riddle-mirror-smirking',
     riddleNumber: 4,
-    title: 'Fun Dare #4',
+    title: 'Fun Dare #4: Friendly Wave',
     instruction: 'Wave your hand side-to-side at the camera!',
     icon: '👋',
-    hint: 'Wave your hand back and forth like saying hello!',
+    hint: 'Wave your hand back and forth horizontally like saying hello!',
     actionType: 'wave_hands',
     durationSeconds: 0,
   },
@@ -70,10 +74,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-5',
     riddleId: 'riddle-candle',
     riddleNumber: 5,
-    title: 'Fun Dare #5',
-    instruction: 'Hold up an open palm to the screen!',
+    title: 'Fun Dare #5: Mystic Shield',
+    instruction: 'Hold up an open palm facing the screen!',
     icon: '✋',
-    hint: 'Hold your open palm facing the webcam!',
+    hint: 'Hold your open palm flat and spread all 5 fingers toward the camera!',
     actionType: 'open_palms',
     durationSeconds: 0,
   },
@@ -83,11 +87,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-6',
     riddleId: 'riddle-footsteps',
     riddleNumber: 6,
-    title: 'Fun Dare #6',
-    instruction: 'Give a big thumbs-up to the camera!',
-    icon: '👍',
-    hint: 'Show a clear thumbs-up to the camera!',
-    actionType: 'thumbs_up',
+    title: 'Fun Dare #6: Victory Sign',
+    instruction: 'Extend index and middle fingers in a V sign!',
+    icon: '✌️',
+    hint: 'Show two fingers up (peace sign), curl ring and pinky fingers!',
+    actionType: 'peace_sign',
     durationSeconds: 0,
   },
 
@@ -96,11 +100,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-7',
     riddleId: 'riddle-echo',
     riddleNumber: 7,
-    title: 'Fun Dare #7',
-    instruction: 'Raise both hands high in the air!',
-    icon: '🙌',
-    hint: 'Raise both hands up high in view of the webcam!',
-    actionType: 'raise_hands',
+    title: 'Fun Dare #7: Echo Ward',
+    instruction: 'Hold up an open palm facing the screen!',
+    icon: '✋',
+    hint: 'Hold your open palm flat and spread all 5 fingers toward the camera!',
+    actionType: 'open_palms',
     durationSeconds: 0,
   },
 
@@ -109,10 +113,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-8',
     riddleId: 'riddle-book',
     riddleNumber: 8,
-    title: 'Fun Dare #8',
+    title: 'Fun Dare #8: Arcane Sparkle',
     instruction: 'Wiggle your fingers at the camera!',
     icon: '🖐️',
-    hint: 'Wiggle all your fingers in front of the screen!',
+    hint: 'Wiggle all your fingers dynamically in front of the lens!',
     actionType: 'wiggle_fingers',
     durationSeconds: 0,
   },
@@ -122,10 +126,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-9',
     riddleId: 'riddle-lock',
     riddleNumber: 9,
-    title: 'Fun Dare #9',
-    instruction: 'Show a peace sign with your fingers!',
+    title: 'Fun Dare #9: Guardian Peace',
+    instruction: 'Show a peace sign with index & middle fingers!',
     icon: '✌️',
-    hint: 'Hold up two fingers in a V victory sign!',
+    hint: 'Hold up index and middle fingers in a V victory sign!',
     actionType: 'peace_sign',
     durationSeconds: 0,
   },
@@ -135,11 +139,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-10',
     riddleId: 'riddle-bottle',
     riddleNumber: 10,
-    title: 'Fun Dare #10',
-    instruction: 'Bring both hands together in front of the camera!',
-    icon: '🤲',
-    hint: 'Bring both hands together in front of the webcam!',
-    actionType: 'clap_hands',
+    title: 'Fun Dare #10: Ocean Wave',
+    instruction: 'Wave your hand side-to-side at the camera!',
+    icon: '👋',
+    hint: 'Smooth side-to-side waving motion in front of the lens!',
+    actionType: 'wave_hands',
     durationSeconds: 0,
   },
 
@@ -148,11 +152,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-11',
     riddleId: 'riddle-window',
     riddleNumber: 11,
-    title: 'Fun Dare #11',
-    instruction: 'Wave your hand side-to-side at the camera!',
-    icon: '👋',
-    hint: 'Wave your hand side to side at the webcam!',
-    actionType: 'wave_hands',
+    title: 'Fun Dare #11: Sunlight Barrier',
+    instruction: 'Hold up an open palm facing the screen!',
+    icon: '✋',
+    hint: 'Spread all five fingers wide toward the webcam!',
+    actionType: 'open_palms',
     durationSeconds: 0,
   },
 
@@ -161,11 +165,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-12',
     riddleId: 'riddle-spiderweb',
     riddleNumber: 12,
-    title: 'Fun Dare #12',
-    instruction: 'Spread all fingers wide on an open palm!',
-    icon: '🖐️',
-    hint: 'Spread all five fingers wide toward the webcam!',
-    actionType: 'open_palms',
+    title: 'Fun Dare #12: Web Weaver Cutter',
+    instruction: 'Show a peace sign with index & middle fingers!',
+    icon: '✌️',
+    hint: 'Hold up index and middle fingers in a V victory sign!',
+    actionType: 'peace_sign',
     durationSeconds: 0,
   },
 
@@ -174,10 +178,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-13',
     riddleId: 'riddle-bell',
     riddleNumber: 13,
-    title: 'Fun Dare #13',
+    title: 'Fun Dare #13: Golden Praise',
     instruction: 'Give a big thumbs-up to the camera!',
     icon: '👍',
-    hint: 'Flash a clear thumbs-up right at the webcam!',
+    hint: 'Flash a clear, proud thumbs-up right at the webcam!',
     actionType: 'thumbs_up',
     durationSeconds: 0,
   },
@@ -187,10 +191,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-14',
     riddleId: 'riddle-fire',
     riddleNumber: 14,
-    title: 'Fun Dare #14',
+    title: 'Fun Dare #14: Flame Clap',
     instruction: 'Bring both hands together in front of the camera!',
     icon: '👏',
-    hint: 'Put both hands together in front of the webcam!',
+    hint: 'Put both hands together in front of the webcam to clap!',
     actionType: 'clap_hands',
     durationSeconds: 0,
   },
@@ -200,10 +204,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-15',
     riddleId: 'riddle-glove',
     riddleNumber: 15,
-    title: 'Fun Dare #15',
-    instruction: 'Hold up an open palm facing the screen!',
+    title: 'Fun Dare #15: Five Fingers Cast',
+    instruction: 'Spread all fingers wide on an open palm!',
     icon: '✋',
-    hint: 'Hold your palm forward toward the camera!',
+    hint: 'Hold your palm forward facing the camera with fingers spread!',
     actionType: 'open_palms',
     durationSeconds: 0,
   },
@@ -213,10 +217,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-16',
     riddleId: 'riddle-map',
     riddleNumber: 16,
-    title: 'Fun Dare #16',
+    title: 'Fun Dare #16: Compass Pointer',
     instruction: 'Point your index finger forward at the camera!',
     icon: '👉',
-    hint: 'Point your index finger straight at the webcam!',
+    hint: 'Point your index finger straight forward, fold other fingers!',
     actionType: 'point_finger',
     durationSeconds: 0,
   },
@@ -226,10 +230,10 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-17',
     riddleId: 'riddle-compass',
     riddleNumber: 17,
-    title: 'Fun Dare #17',
+    title: 'Fun Dare #17: True North V-Sign',
     instruction: 'Show a peace sign with your fingers!',
     icon: '✌️',
-    hint: 'Hold up two fingers in a V sign to the camera!',
+    hint: 'Hold up index and middle fingers in a V sign to the camera!',
     actionType: 'peace_sign',
     durationSeconds: 0,
   },
@@ -239,11 +243,11 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-18',
     riddleId: 'riddle-stairs',
     riddleNumber: 18,
-    title: 'Fun Dare #18',
-    instruction: 'Wiggle your fingers at the camera!',
-    icon: '🖐️',
-    hint: 'Wiggle your fingers in front of the webcam!',
-    actionType: 'wiggle_fingers',
+    title: 'Fun Dare #18: Hallway Farewell',
+    instruction: 'Wave your hand side-to-side at the camera!',
+    icon: '👋',
+    hint: 'Wave your hand horizontally across the webcam view!',
+    actionType: 'wave_hands',
     durationSeconds: 0,
   },
 
@@ -252,7 +256,7 @@ export const FUN_DARES_BY_RIDDLE_ID: Record<string, FunDare> = {
     id: 'fun-dare-19',
     riddleId: 'riddle-coin',
     riddleNumber: 19,
-    title: 'Fun Dare #19',
+    title: 'Fun Dare #19: Champion Thumb',
     instruction: 'Give a big thumbs-up to the camera!',
     icon: '👍',
     hint: 'Show a clear, proud thumbs-up to the webcam!',
@@ -272,7 +276,7 @@ export function getFunDareForRiddle(riddleId: string): FunDare {
     return FUN_DARES_BY_RIDDLE_ID[riddleId]
   }
 
-  // Deterministic fallback based on hashing or list position
+  // Deterministic fallback based on hashing
   let hash = 0
   for (let i = 0; i < riddleId.length; i++) {
     hash = (hash << 5) - hash + riddleId.charCodeAt(i)

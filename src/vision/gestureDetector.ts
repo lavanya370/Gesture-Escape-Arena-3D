@@ -53,7 +53,7 @@ class GestureDetector {
   private pinchConfirmFrames: number = 0
   private releaseConfirmFrames: number = 0
   private lastPinchTimestamp: number = 0
-  private readonly pinchCooldownMs: number = 320
+  private readonly pinchCooldownMs: number = 450
 
   // Hover tracking with pre-pinch latching
   private currentHoveredElement: HTMLElement | null = null
@@ -422,7 +422,7 @@ class GestureDetector {
     if (typeof document === 'undefined') return null
 
     const selector =
-      'button, a, input, [role="button"], [data-selectable="true"], .btn-start-game, .btn-cinematic-start, .large-answer-card, .btn-play-reveal-options, .btn-submit-answer-prominent, .btn-fullscreen-dare-retry, .btn-fullscreen-dare-new, .btn-fullscreen-dare-exit, .btn-back-to-start-menu, .gate-arch-card, .riddle-nav-btn, .btn-confirm-action, .btn-cancel-action, .answer-choice-btn, .vault-hint-card'
+      'button, a, input, [role="button"], [data-selectable="true"], .btn-start-game, .btn-cinematic-start, .large-answer-card, .btn-play-reveal-options, .btn-submit-answer-prominent, .btn-fullscreen-dare-retry, .btn-fullscreen-dare-new, .btn-fullscreen-dare-exit, .btn-fullscreen-dare-snap, .btn-back-to-start-menu, .gate-arch-card, .riddle-nav-btn, .btn-confirm-action, .btn-cancel-action, .answer-choice-btn, .vault-hint-card'
 
     const testPoint = (px: number, py: number): HTMLElement | null => {
       const elements = document.elementsFromPoint
@@ -436,10 +436,21 @@ class GestureDetector {
           el.closest('.hand-cursor-root') ||
           el.closest('.particle-canvas') ||
           el.closest('.celebration-confetti-canvas') ||
-          el.closest('.vision-hud-dock')
+          el.closest('.vision-hud-dock') ||
+          el.closest('.webcam-hud-container')
         ) {
           continue
         }
+
+        // If a full-screen modal or dialog is open, do not hit-test background elements outside the modal
+        const modalOverlay = document.querySelector('.fullscreen-dare-viewport, .fullscreen-celebration-viewport, .riddle-reset-banner, [role="dialog"]')
+        if (
+          modalOverlay &&
+          !el.closest('.fullscreen-dare-viewport, .fullscreen-celebration-viewport, .riddle-reset-banner, [role="dialog"]')
+        ) {
+          continue
+        }
+
         const interactive = el.closest<HTMLElement>(selector)
         if (interactive) {
           if ((interactive as HTMLButtonElement).disabled) return null

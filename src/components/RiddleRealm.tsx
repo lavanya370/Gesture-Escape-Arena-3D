@@ -7,7 +7,11 @@ import { CameraStatusBadge } from './CameraStatusBadge'
 import { gestureDetector } from '../vision/gestureDetector'
 import cryptBg from '../assets/crypt-bg.jpg'
 import { getFunDareForRiddle, type FunDare } from '../data/funDares'
-import { verifyDareAction, resetActionMotionHistory } from '../vision/handActionVerifier'
+import {
+  verifyDareAction,
+  resetActionMotionHistory,
+  type DareDebugDetails,
+} from '../vision/handActionVerifier'
 
 // Pure lightweight canvas celebration party-popper effect
 const ConfettiBurst: React.FC = () => {
@@ -124,6 +128,8 @@ const ConfettiBurst: React.FC = () => {
   return <canvas ref={canvasRef} className="celebration-confetti-canvas" />
 }
 
+export type DareFeedbackState = 'NO_HAND' | 'WAITING' | 'DETECTED' | 'VERIFYING' | 'COMPLETED'
+
 export const RiddleRealm: React.FC = () => {
   const {
     riddle,
@@ -138,7 +144,12 @@ export const RiddleRealm: React.FC = () => {
     recordDareCompleted,
   } = useGame()
 
-  const { status: cameraStatus, startCamera } = useCamera()
+  const { status: cameraStatus, startCamera, captureWebcamSnapshot, setIsMinimized } = useCamera()
+
+  // Collapse camera HUD into compact corner widget to guarantee options are fully visible
+  useEffect(() => {
+    setIsMinimized(true)
+  }, [setIsMinimized])
 
   // Auto-initiate camera if idle
   useEffect(() => {
@@ -159,8 +170,19 @@ export const RiddleRealm: React.FC = () => {
   const [dareHoldProgress, setDareHoldProgress] = useState<number>(0)
   const [dareRetryMsg, setDareRetryMsg] = useState<string>('')
   const [dareFeedbackText, setDareFeedbackText] = useState<string>('')
-  const detectedFramesRef = useRef<number>(0)
-  const TARGET_DARE_FRAMES = 12 // ~0.4s of consistent hand action in front of webcam
+  const [dareDebugDetails, setDareDebugDetails] = useState<DareDebugDetails | null>(null)
+  const [dareState, setDareState] = useState<DareFeedbackState>('NO_HAND')
+  const [snapshotSaved, setSnapshotSaved] = useState<boolean>(false)
+
+  // Timing and verification tracking refs (avoids frame-by-frame React state thrashing)
+  const dareStartTimeRef = useRef<number>(0)
+  const gestureHoldStartTimeRef = useRef<number>(0)
+  const consecutiveMatchFramesRef = useRef<number>(0)
+  const hasCompletedDareRef = useRef<boolean>(false)
+  const lastProgressRef = useRef<number>(0)
+  const lastDebugUpdateRef = useRef<number>(0)
+  const TARGET_VERIFICATION_MS = 650 // ~0.65 seconds (in 0.5-0.8s requirement range)
+  const MIN_MATCH_FRAMES = 8 // At least 8 consecutive valid frames (~260ms)
 
   // Predefined unique Fun Dare for the current riddle
   const currentDare: FunDare = useMemo(() => getFunDareForRiddle(riddle.id), [riddle.id])
@@ -218,6 +240,39 @@ export const RiddleRealm: React.FC = () => {
   // Dedup guard to prevent duplicate rapid submissions
   const lastChoiceTimeRef = useRef<{ choice: string; time: number }>({ choice: '', time: 0 })
 
+  // Clean reset helper for dare tracking state (fresh frames, zero progress, clean timers)
+  const resetDareState = useCallback(() => {
+    resetActionMotionHistory()
+    gestureDetector.reset()
+    dareStartTimeRef.current = performance.now()
+    gestureHoldStartTimeRef.current = 0
+    consecutiveMatchFramesRef.current = 0
+    hasCompletedDareRef.current = false
+    lastProgressRef.current = 0
+    setDareHoldProgress(0)
+    setDareState('NO_HAND')
+    setDareRetryMsg('')
+    setDareFeedbackText('Show your hand clearly to the camera.')
+  }, [])
+
+  // Intentional screenshot snapshot capture (does not alter dare completion)
+  const handleTakeSnapshot = useCallback(() => {
+    sound.playHover()
+    const dataUrl = captureWebcamSnapshot()
+    if (!dataUrl) return
+
+    try {
+      const link = document.createElement('a')
+      link.download = `gesture-dare-${riddle.id}-${Date.now()}.png`
+      link.href = dataUrl
+      link.click()
+      setSnapshotSaved(true)
+      setTimeout(() => setSnapshotSaved(false), 2500)
+    } catch (e) {
+      console.warn('Failed to save snapshot:', e)
+    }
+  }, [captureWebcamSnapshot, riddle.id])
+
   // Handle selecting / submitting an option
   const handleOptionChosen = useCallback(
     (chosen: string) => {
@@ -226,7 +281,7 @@ export const RiddleRealm: React.FC = () => {
       const now = Date.now()
       if (
         lastChoiceTimeRef.current.choice === chosen &&
-        now - lastChoiceTimeRef.current.time < 450
+        now - lastChoiceTimeRef.current.time < 500
       ) {
         return // Ignore rapid duplicate call
       }
@@ -248,17 +303,13 @@ export const RiddleRealm: React.FC = () => {
       } else {
         sound.playWrongAnswer()
         sound.playGuardianDareAlert()
-        resetActionMotionHistory()
-        detectedFramesRef.current = 0
-        setDareHoldProgress(0)
-        setDareRetryMsg('')
-        setDareFeedbackText('')
+        resetDareState()
         setIsFunDareActive(true)
         setIsDareCompleted(false)
         setCelebrationActive(false)
       }
     },
-    [submitAnswer]
+    [submitAnswer, resetDareState]
   )
 
   // Submit Answer validation handler from input form
@@ -278,34 +329,25 @@ export const RiddleRealm: React.FC = () => {
   // Retry action dare if not detected or player wants another attempt
   const handleRetryDareAction = useCallback(() => {
     sound.playHover()
-    resetActionMotionHistory()
-    detectedFramesRef.current = 0
-    setDareHoldProgress(0)
+    resetDareState()
+    setDareState('WAITING')
     setDareRetryMsg('Pose reset. Perform the required action in front of the camera!')
-  }, [])
+  }, [resetDareState])
 
   // Return to the SAME riddle with question and answer options visible
   const handleReturnToRiddleAfterDare = useCallback(() => {
     sound.playStartSpell()
-    resetActionMotionHistory()
-    detectedFramesRef.current = 0
-    setDareHoldProgress(0)
-    setDareRetryMsg('')
-    setDareFeedbackText('')
+    resetDareState()
     setIsFunDareActive(false)
     setIsDareCompleted(false)
     setAnswerInput('')
     setSelectedOption(null)
-  }, [])
+  }, [resetDareState])
 
   // Return to Start Screen cleanly resetting temporary session state
   const handleBackToStartMenu = useCallback(() => {
     sound.playHover()
-    resetActionMotionHistory()
-    detectedFramesRef.current = 0
-    setDareHoldProgress(0)
-    setDareRetryMsg('')
-    setDareFeedbackText('')
+    resetDareState()
     setSelectedOption(null)
     setAnswerInput('')
     setCelebrationActive(false)
@@ -313,18 +355,14 @@ export const RiddleRealm: React.FC = () => {
     setIsDareCompleted(false)
     setShowResetConfirm(false)
     returnToStartMenu()
-  }, [returnToStartMenu])
+  }, [returnToStartMenu, resetDareState])
 
   const handleExitToStart = handleBackToStartMenu
 
   // Start fresh case
   const handleStartNewCase = useCallback(() => {
     sound.playStartSpell()
-    resetActionMotionHistory()
-    detectedFramesRef.current = 0
-    setDareHoldProgress(0)
-    setDareRetryMsg('')
-    setDareFeedbackText('')
+    resetDareState()
     startNewRiddleSession()
     setSelectedOption(null)
     setAnswerInput('')
@@ -332,16 +370,12 @@ export const RiddleRealm: React.FC = () => {
     setIsFunDareActive(false)
     setIsDareCompleted(false)
     setShowResetConfirm(false)
-  }, [startNewRiddleSession])
+  }, [startNewRiddleSession, resetDareState])
 
   // Restart case
   const handleResetCase = useCallback(() => {
     sound.playStartSpell()
-    resetActionMotionHistory()
-    detectedFramesRef.current = 0
-    setDareHoldProgress(0)
-    setDareRetryMsg('')
-    setDareFeedbackText('')
+    resetDareState()
     resetGameProgress()
     setSelectedOption(null)
     setAnswerInput('')
@@ -349,7 +383,7 @@ export const RiddleRealm: React.FC = () => {
     setIsFunDareActive(false)
     setIsDareCompleted(false)
     setShowResetConfirm(false)
-  }, [resetGameProgress])
+  }, [resetGameProgress, resetDareState])
 
   // Open Magic Coin Catcher to unlock the riddle answer options
   const handleEnterCoinCatcher = useCallback(() => {
@@ -376,6 +410,25 @@ export const RiddleRealm: React.FC = () => {
         if (prevFocusedOptionIndexRef.current !== null) {
           prevFocusedOptionIndexRef.current = null
           setFocusedOptionIndex(null)
+        }
+
+        // When in Fun Dare, smoothly decay hold progress and provide clear camera guidance
+        if (isFunDareActiveRef.current && !isDareCompletedRef.current) {
+          gestureHoldStartTimeRef.current = 0
+          consecutiveMatchFramesRef.current = 0
+          if (lastProgressRef.current > 0) {
+            lastProgressRef.current = 0
+            setDareHoldProgress(0)
+          }
+          setDareState('NO_HAND')
+          setDareFeedbackText('Show your hand clearly to the camera.')
+          setDareRetryMsg('No hand detected by camera yet. Position your hand in front of the lens!')
+          setDareDebugDetails({
+            actionType: currentDareRef.current.actionType,
+            handsCount: 0,
+            landmarksReceived: false,
+            reason: 'Waiting for hand to enter camera view',
+          })
         }
         return
       }
@@ -420,6 +473,7 @@ export const RiddleRealm: React.FC = () => {
           setFocusedOptionIndex(null)
         }
 
+        // When dare is already completed, allow clicking/pinching RETURN TO RIDDLE button
         if (isDareCompletedRef.current) {
           const returnBtn = dareReturnBtnRef.current
           if (returnBtn) {
@@ -439,42 +493,95 @@ export const RiddleRealm: React.FC = () => {
           return
         }
 
+        const now = performance.now()
+
+        // Fresh frames guarantee: ignore frames during the first 250ms of dare activation
+        // to prevent reusing stale gestures or frames from the answer submission click
+        if (now - dareStartTimeRef.current < 250) {
+          return
+        }
+
         // Camera Action Verification for Fun Dare
         if (data.landmarksList && data.landmarksList.length > 0) {
           const dareAction = currentDareRef.current.actionType
           const verification = verifyDareAction(dareAction, data.landmarksList)
-          if (verification.isMatch) {
-            setDareRetryMsg('')
-            setDareFeedbackText(verification.feedbackTip)
-            detectedFramesRef.current = Math.min(TARGET_DARE_FRAMES, detectedFramesRef.current + 1)
-            const progress = Math.min(100, Math.round((detectedFramesRef.current / TARGET_DARE_FRAMES) * 100))
-            setDareHoldProgress(progress)
 
-            if (detectedFramesRef.current >= TARGET_DARE_FRAMES) {
-              detectedFramesRef.current = 0
+          // Throttle diagnostic updates to keep frame rate high
+          if (now - lastDebugUpdateRef.current > 150) {
+            lastDebugUpdateRef.current = now
+            setDareDebugDetails(verification.debugDetails)
+          }
+
+          if (verification.isMatch) {
+            consecutiveMatchFramesRef.current++
+            if (gestureHoldStartTimeRef.current === 0) {
+              gestureHoldStartTimeRef.current = now
+            }
+
+            const elapsedMs = now - gestureHoldStartTimeRef.current
+            const progress = Math.min(100, Math.round((elapsedMs / TARGET_VERIFICATION_MS) * 100))
+
+            // Only update progress state if changed by >= 2% or reached 100%
+            if (Math.abs(progress - lastProgressRef.current) >= 2 || progress === 100) {
+              lastProgressRef.current = progress
+              setDareHoldProgress(progress)
+            }
+
+            // Immediate feedback: GESTURE DETECTED on first frames, VERIFYING while holding
+            if (consecutiveMatchFramesRef.current <= 2) {
+              setDareState('DETECTED')
+            } else {
+              setDareState('VERIFYING')
+            }
+            setDareFeedbackText(verification.feedbackTip)
+            setDareRetryMsg('')
+
+            // Complete ONLY when verified for required duration AND consecutive valid frames
+            if (
+              elapsedMs >= TARGET_VERIFICATION_MS &&
+              consecutiveMatchFramesRef.current >= MIN_MATCH_FRAMES &&
+              !hasCompletedDareRef.current
+            ) {
+              hasCompletedDareRef.current = true
               sound.playVictoryFanfare()
               recordDareCompleted(riddle.id)
-              setIsDareCompleted(true)
               setDareHoldProgress(100)
+              setDareState('COMPLETED')
+              setIsDareCompleted(true)
               resetActionMotionHistory()
             }
           } else {
-            setDareFeedbackText(verification.feedbackTip)
-            if (detectedFramesRef.current > 0) {
-              detectedFramesRef.current = Math.max(0, detectedFramesRef.current - 1)
-              const progress = Math.min(100, Math.round((detectedFramesRef.current / TARGET_DARE_FRAMES) * 100))
-              setDareHoldProgress(progress)
+            // Wrong gesture or tracking error
+            gestureHoldStartTimeRef.current = 0
+            consecutiveMatchFramesRef.current = 0
+            if (lastProgressRef.current > 0) {
+              lastProgressRef.current = 0
+              setDareHoldProgress(0)
             }
-            setDareRetryMsg(`Action not detected yet: ${verification.feedbackTip} Keep trying!`)
+            setDareState('WAITING')
+            setDareFeedbackText(verification.feedbackTip)
+            setDareRetryMsg(`Waiting for ${currentDareRef.current.title}: ${verification.debugDetails.reason}`)
           }
         } else {
-          setDareFeedbackText('Hold your hand up in front of the camera!')
-          if (detectedFramesRef.current > 0) {
-            detectedFramesRef.current = Math.max(0, detectedFramesRef.current - 1)
-            const progress = Math.min(100, Math.round((detectedFramesRef.current / TARGET_DARE_FRAMES) * 100))
-            setDareHoldProgress(progress)
+          // No hand detected by camera
+          gestureHoldStartTimeRef.current = 0
+          consecutiveMatchFramesRef.current = 0
+          if (lastProgressRef.current > 0) {
+            lastProgressRef.current = 0
+            setDareHoldProgress(0)
           }
-          setDareRetryMsg('No hand detected by camera yet. Position your hand in front of the lens and retry!')
+          setDareState('NO_HAND')
+          setDareFeedbackText('Show your hand clearly to the camera.')
+          if (now - lastDebugUpdateRef.current > 150) {
+            lastDebugUpdateRef.current = now
+            setDareDebugDetails({
+              actionType: currentDareRef.current.actionType,
+              handsCount: 0,
+              landmarksReceived: false,
+              reason: 'No hand detected in camera view',
+            })
+          }
+          setDareRetryMsg('No hand detected by camera yet. Position your hand in front of the lens!')
         }
 
         const retryBtn = dareRetryBtnRef.current
@@ -555,7 +662,7 @@ export const RiddleRealm: React.FC = () => {
         setFocusedOptionIndex(hoveredIdx)
       }
 
-      // One-shot Pinch Selection: Only triggers ONCE per pinch gesture
+      // One-shot Pinch Selection: Dispatched directly to chosen option with latch to prevent duplicate triggers
       if (hoveredIdx !== null && data.isPinching && !pinchLockRef.current) {
         pinchLockRef.current = true
         const chosen = optionsRef.current[hoveredIdx]
@@ -1041,7 +1148,7 @@ export const RiddleRealm: React.FC = () => {
               </div>
 
               <h2 className="fullscreen-dare-title dare-celebration-title">
-                Awesome! Dare Completed!
+                AWESOME! DARE COMPLETED!
               </h2>
               <p className="fullscreen-dare-subtitle dare-celebration-subtitle">
                 Webcam verified your action! Ready to crack the riddle?
@@ -1054,6 +1161,19 @@ export const RiddleRealm: React.FC = () => {
               </div>
 
               <div className="fullscreen-dare-actions">
+                <button
+                  type="button"
+                  id="dare-success-snap-btn"
+                  className="btn-fullscreen-dare-snap"
+                  onClick={handleTakeSnapshot}
+                  data-selectable="true"
+                  aria-label="Take Victory Photo"
+                  title="Snap a photo of your victory"
+                >
+                  <span className="btn-glyph">📸</span>
+                  <span>{snapshotSaved ? 'PHOTO SAVED!' : 'SNAP VICTORY PHOTO'}</span>
+                </button>
+
                 <button
                   type="button"
                   id="dare-return-btn"
@@ -1079,7 +1199,7 @@ export const RiddleRealm: React.FC = () => {
                 </div>
                 <h2 className="fun-dare-main-title">&ldquo;Wrong answer! Here is your Fun Dare!&rdquo;</h2>
                 <p className="fun-dare-sub-guidance">
-                  Use your webcam to perform the action and earn your retry!
+                  Perform the gesture in front of your camera to unlock your retry!
                 </p>
               </div>
 
@@ -1109,40 +1229,156 @@ export const RiddleRealm: React.FC = () => {
                     <span
                       className="dare-tracking-dot"
                       style={{
-                        background: !isHandActive
-                          ? '#ef4444'
-                          : dareHoldProgress > 0
-                          ? '#10b981'
-                          : '#f59e0b',
+                        background:
+                          dareState === 'NO_HAND'
+                            ? '#ef4444'
+                            : dareState === 'WAITING'
+                            ? '#f59e0b'
+                            : dareState === 'DETECTED'
+                            ? '#10b981'
+                            : dareState === 'VERIFYING'
+                            ? '#06b6d4'
+                            : '#22c55e',
                       }}
                     />
-                    <span className="dare-tracking-status-text">
-                      {!isHandActive
-                        ? '📷 Camera active: Position your hand in front of the lens...'
-                        : dareHoldProgress > 0
-                        ? `⚡ ACTION DETECTED! HOLD TO VERIFY: ${dareHoldProgress}%`
-                        : `👀 Watching camera... ${dareFeedbackText || 'Perform the required action now!'}`}
+                    <span
+                      className="dare-tracking-status-text"
+                      style={{
+                        fontWeight: 800,
+                        letterSpacing: '0.04em',
+                        color:
+                          dareState === 'NO_HAND'
+                            ? '#fca5a5'
+                            : dareState === 'WAITING'
+                            ? '#fde68a'
+                            : dareState === 'DETECTED'
+                            ? '#86efac'
+                            : dareState === 'VERIFYING'
+                            ? '#67e8f9'
+                            : '#86efac',
+                      }}
+                    >
+                      {dareState === 'NO_HAND' && 'Show your hand clearly to the camera.'}
+                      {dareState === 'WAITING' && 'WAITING FOR GESTURE'}
+                      {dareState === 'DETECTED' && 'GESTURE DETECTED'}
+                      {dareState === 'VERIFYING' && `VERIFYING... (${dareHoldProgress}%)`}
+                      {dareState === 'COMPLETED' && 'AWESOME! DARE COMPLETED!'}
                     </span>
                   </div>
                   <div className="dare-progress-bar-track">
                     <div
                       className="dare-progress-bar-fill"
-                      style={{ width: `${dareHoldProgress}%` }}
+                      style={{
+                        width: `${dareHoldProgress}%`,
+                        background:
+                          dareState === 'VERIFYING'
+                            ? 'linear-gradient(90deg, #06b6d4, #10b981)'
+                            : dareState === 'DETECTED'
+                            ? '#10b981'
+                            : 'linear-gradient(90deg, #f59e0b, #10b981)',
+                        boxShadow:
+                          dareHoldProgress > 0
+                            ? '0 0 12px rgba(16, 185, 129, 0.65)'
+                            : 'none',
+                        transition: 'width 0.12s linear',
+                      }}
                     />
                   </div>
                 </div>
 
+                {/* Sub-status guidance line */}
+                <div
+                  className="dare-feedback-sub-line"
+                  style={{
+                    marginTop: '0.5rem',
+                    textAlign: 'center',
+                    fontSize: '0.85rem',
+                    color: '#cbd5e1',
+                  }}
+                >
+                  {dareState === 'NO_HAND' && 'Position your hand inside the webcam view to start.'}
+                  {dareState === 'WAITING' && (dareFeedbackText || currentDare.hint)}
+                  {dareState === 'DETECTED' && '⚡ Pose recognized! Hold steady for ~0.6 seconds to verify...'}
+                  {dareState === 'VERIFYING' && '⏳ Verifying pose... Keep holding steady!'}
+                  {dareState === 'COMPLETED' && '🎉 Verification finished!'}
+                </div>
+
                 {/* Real-time Retry Guidance message if action is not detected */}
-                {dareRetryMsg && (
+                {dareRetryMsg && dareState === 'WAITING' && (
                   <div className="dare-retry-guidance-pill" role="status">
                     <span className="guidance-icon">💡</span>
                     <span className="guidance-text">{dareRetryMsg}</span>
+                  </div>
+                )}
+
+                {/* Verifier Diagnostics HUD */}
+                {dareDebugDetails && (
+                  <div
+                    className="dare-debug-hud"
+                    style={{
+                      marginTop: '0.75rem',
+                      padding: '0.5rem 0.75rem',
+                      borderRadius: '8px',
+                      background: 'rgba(15, 23, 42, 0.85)',
+                      border: '1px solid rgba(148, 163, 184, 0.25)',
+                      fontSize: '0.75rem',
+                      fontFamily: 'monospace',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.25rem',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <span>
+                        <strong style={{ color: '#38bdf8' }}>DARE:</strong> {dareDebugDetails.actionType}
+                      </span>
+                      <span>
+                        <strong style={{ color: '#38bdf8' }}>HANDS:</strong> {dareDebugDetails.handsCount}
+                      </span>
+                      <span>
+                        <strong style={{ color: '#38bdf8' }}>LANDMARKS:</strong>{' '}
+                        <span style={{ color: dareDebugDetails.landmarksReceived ? '#4ade80' : '#f87171' }}>
+                          {dareDebugDetails.landmarksReceived ? 'RECEIVED' : 'NONE'}
+                        </span>
+                      </span>
+                    </div>
+                    <div>
+                      <strong style={{ color: '#fbbf24' }}>STATUS:</strong>{' '}
+                      <span style={{ color: '#e2e8f0' }}>{dareDebugDetails.reason}</span>
+                    </div>
+                    {dareDebugDetails.actionType === 'wave_hands' && (
+                      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        <span>
+                          <strong style={{ color: '#a78bfa' }}>TRAVEL:</strong>{' '}
+                          {(dareDebugDetails.waveTravelDistance ?? 0).toFixed(3)} / 0.075
+                        </span>
+                        <span>
+                          <strong style={{ color: '#a78bfa' }}>REVERSALS:</strong>{' '}
+                          {dareDebugDetails.waveReversals ?? 0} / 2
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
               {/* Action Buttons (Genuine Camera Verification Required - No Skip) */}
               <div className="fullscreen-dare-actions">
+                <button
+                  type="button"
+                  id="dare-snap-btn"
+                  className="btn-fullscreen-dare-snap"
+                  onClick={handleTakeSnapshot}
+                  data-selectable="true"
+                  aria-label="Take Photo"
+                  title="Snap a photo of your pose"
+                >
+                  <span className="btn-glyph">📸</span>
+                  <span>{snapshotSaved ? 'PHOTO SAVED!' : 'SNAP PHOTO'}</span>
+                </button>
+
                 <button
                   type="button"
                   id="dare-retry-btn"
@@ -1154,6 +1390,18 @@ export const RiddleRealm: React.FC = () => {
                 >
                   <span className="btn-glyph">🔄</span>
                   <span>RESET POSE</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="dare-back-to-riddle-btn"
+                  className="btn-fullscreen-dare-retry btn-fun-return"
+                  onClick={handleReturnToRiddleAfterDare}
+                  data-selectable="true"
+                  aria-label="Return to Riddle to Retry"
+                >
+                  <span className="btn-glyph">🔮</span>
+                  <span>RETURN TO RIDDLE</span>
                 </button>
 
                 <button

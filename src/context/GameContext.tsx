@@ -258,11 +258,25 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     (answer: string): { isCorrect: boolean } => {
       const cleanAnswer = answer.trim().toUpperCase()
       const target = currentRiddle.correctAnswer.toUpperCase()
+      const correctIndex = currentRiddle.options.findIndex(
+        (opt) => opt.trim().toUpperCase() === target
+      )
+      const correctLetter = ['A', 'B', 'C', 'D'][correctIndex] || ''
+
       const isCorrect =
         cleanAnswer === target ||
         cleanAnswer.endsWith(target) ||
         cleanAnswer.includes(target) ||
-        (target === 'MIRROR' && (cleanAnswer === 'B' || cleanAnswer === 'B. MIRROR' || cleanAnswer === 'OPTION B'))
+        (correctLetter !== '' && (
+          cleanAnswer === correctLetter ||
+          cleanAnswer === `${correctLetter}.` ||
+          cleanAnswer === `OPTION ${correctLetter}` ||
+          cleanAnswer === `(${correctLetter})` ||
+          cleanAnswer.startsWith(`${correctLetter}.`) ||
+          cleanAnswer.startsWith(`${correctLetter}:`) ||
+          cleanAnswer.startsWith(`OPTION ${correctLetter}:`) ||
+          cleanAnswer.startsWith(`OPTION ${correctLetter}.`)
+        ))
 
       setSavedData((prev) => {
         const nextAttempts = prev.attemptsCount + 1
@@ -291,7 +305,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       return { isCorrect }
     },
-    [currentRiddle.id, currentRiddle.correctAnswer]
+    [currentRiddle.id, currentRiddle.correctAnswer, currentRiddle.options]
   )
 
   const recordCoinScore = useCallback((score: number) => {

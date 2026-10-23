@@ -46,6 +46,7 @@ export interface CameraContextValue {
   setIsVisionHUDOpen: React.Dispatch<React.SetStateAction<boolean>>
   setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>
   stream: MediaStream | null
+  captureWebcamSnapshot: () => string | null
   // Compatibility aliases
   isBodyDetected: boolean
   torsoPositionX: number
@@ -472,6 +473,27 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
     }
   }, [stopCamera])
 
+  // Intentional screenshot / photo capture helper
+  const captureWebcamSnapshot = useCallback((): string | null => {
+    const video = previewVideoRef.current || videoRef.current
+    if (!video || video.readyState < 2 || video.videoWidth === 0) return null
+    try {
+      const snapCanvas = document.createElement('canvas')
+      snapCanvas.width = video.videoWidth
+      snapCanvas.height = video.videoHeight
+      const sCtx = snapCanvas.getContext('2d')
+      if (!sCtx) return null
+      // Mirror horizontally to match the player view
+      sCtx.translate(snapCanvas.width, 0)
+      sCtx.scale(-1, 1)
+      sCtx.drawImage(video, 0, 0, snapCanvas.width, snapCanvas.height)
+      return snapCanvas.toDataURL('image/png')
+    } catch (e) {
+      console.warn('Screenshot capture error:', e)
+      return null
+    }
+  }, [])
+
   const contextValue: CameraContextValue = {
     status,
     statusMessage,
@@ -490,6 +512,7 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
     setIsVisionHUDOpen,
     setIsMinimized,
     stream,
+    captureWebcamSnapshot,
     // Compatibility aliases
     isBodyDetected: isHandDetected,
     torsoPositionX: handPositionX,
@@ -520,11 +543,14 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
         <aside
           className="vision-hud-dock"
           aria-label="Webcam Hand Tracking HUD"
-          style={{ zIndex: 9000 }}
+          style={{ zIndex: 60, pointerEvents: 'none' }}
         >
-          <div className={`webcam-hud-container ${isMinimized ? 'minimized' : ''}`}>
+          <div
+            className={`webcam-hud-container ${isMinimized ? 'minimized' : ''}`}
+            style={{ pointerEvents: 'none' }}
+          >
             {/* HUD Header Bar */}
-            <div className="webcam-hud-header">
+            <div className="webcam-hud-header" style={{ pointerEvents: 'auto' }}>
               <div className="hud-title-box">
                 <span className="hud-hand-icon" aria-hidden="true">🖐️</span>
                 <span className={`hud-status-led ${status}`}></span>
@@ -647,7 +673,7 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
               </div>
 
               {/* Controls: Start Camera / Stop Camera */}
-              <div className="webcam-controls-row">
+              <div className="webcam-controls-row" style={{ pointerEvents: 'auto' }}>
                 {status !== 'active' ? (
                   <button
                     type="button"
@@ -680,7 +706,7 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
 
             {/* Minimized Pill Bar */}
             {isMinimized && (
-              <div className="hud-minimized-summary">
+              <div className="hud-minimized-summary" style={{ pointerEvents: 'auto' }}>
                 <span className="min-label">
                   {status === 'active'
                     ? isHandDetected

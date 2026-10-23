@@ -37,7 +37,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'In the grand ballroom of Ravenscroft Castle, an ornate glass hangs within an antique gilded frame. It watches all who pass, reproducing every expression in perfect silence, yet keeping nothing of its own.',
     question:
       'I show you a face, but I possess no eyes of my own.\nI speak no words, but mimic every grimace you make.\nYet the second you walk away, I am completely empty.\nWhat am I?',
-    options: ['PORTRAIT', 'MIRROR', 'CAMERA', 'STATUE'],
+    options: ['PORTRAIT', 'CAMERA', 'MIRROR', 'STATUE'],
     correctAnswer: 'MIRROR',
     explanation:
       'A mirror shows your face without having eyes of its own, mimics your every expression, and becomes completely empty the moment you walk away!',
@@ -73,7 +73,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Midnight strikes at Blackwood Manor. A nervous night guard swears a dark silhouette is glued to his heels through every drafty corridor, mimicking his every frantic move!',
     question:
       'Someone follows you through every room.\nThey mimic your every frantic move,\nyet they vanish the instant the lights go black.\nWho is this silent intruder?',
-    options: ['GHOST', 'SHADOW', 'SPY', 'PUPPET'],
+    options: ['SHADOW', 'GHOST', 'SPY', 'PUPPET'],
     correctAnswer: 'SHADOW',
     explanation:
       'Your shadow mimics your exact posture and motion whenever illuminated, but disappears into nothingness the moment darkness swallows the room.',
@@ -109,7 +109,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'The eccentric Lord Ravenscroft passed away, leaving his fortune sealed in a gargantuan iron vault. The greedy heirs tore up the mansion, finding only a tiny notched piece of brass!',
     question:
       'I have dozens of teeth, but I never take a bite.\nI can open the heaviest iron gate,\nyet I can never walk through it myself.\nWhat am I?',
-    options: ['COMB', 'KEY', 'SAW', 'ZIPPER'],
+    options: ['COMB', 'SAW', 'ZIPPER', 'KEY'],
     correctAnswer: 'KEY',
     explanation:
       'A key has serrated teeth cut into its blade to lift internal lock pins, unlocking massive doors and chests that it cannot cross itself.',
@@ -181,7 +181,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'During a thunderstorm blackout in Blackwood Abbey, an investigator spots a glowing white cylinder weeping pale tears in the cold stone chapel.',
     question:
       'My life is measured in hours,\nand I serve by being consumed.\nI am tall when young, but grow short when old.\nMy breath brings light,\nbut my tears are made of wax.\nWHAT AM I?',
-    options: ['CANDLE', 'HOURGLASS', 'MATCHSTICK', 'TORCH'],
+    options: ['HOURGLASS', 'MATCHSTICK', 'CANDLE', 'TORCH'],
     correctAnswer: 'CANDLE',
     explanation:
       'A candle burns down its wick over hours, growing shorter as it melts paraffin wax into dripping tears.',
@@ -217,7 +217,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'A cat burglar slipped into the greenhouse and snatched the Empress Emerald. Chief Inspector Sterling arrives to find a curious path through the wet soil!',
     question:
       'The more of me you take, the more you leave behind.\nDetectives hunt for me in dust, sand, and mud,\nyet I vanish forever beneath falling rain.\nWhat am I?',
-    options: ['BREATHS', 'FOOTSTEPS', 'FINGERPRINTS', 'SHADOWS'],
+    options: ['FOOTSTEPS', 'BREATHS', 'FINGERPRINTS', 'SHADOWS'],
     correctAnswer: 'FOOTSTEPS',
     explanation:
       'Every footstep you take leaves an impression behind you on the ground, creating a track that rainfall or wind eventually erases.',
@@ -253,7 +253,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Lost in the subterranean catacombs beneath Paris, an urban explorer yells for an exit. A sinister phantom voice repeats every single word right back!',
     question:
       'I have no voice, yet I answer when you shout.\nI speak every language on Earth, but only repeat what is told.\nI cannot be seen, but you will hear me in deep canyons and empty stone halls.\nWhat am I?',
-    options: ['GHOST', 'ECHO', 'RADIO', 'PARROT'],
+    options: ['GHOST', 'RADIO', 'PARROT', 'ECHO'],
     correctAnswer: 'ECHO',
     explanation:
       'An acoustic echo bounces sound waves off cavernous walls, returning your own words without having vocal cords of its own.',
@@ -325,7 +325,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'The escape room chamber door is clamped shut by a heavy bronze apparatus with a U-shaped shackle. A cryptic warning is stamped into its metal belly!',
     question:
       'I guard great secrets and treasure without a sword or shield.\nI click shut with a satisfying snap,\nand only surrender when fed the right secret teeth or code.\nWhat am I?',
-    options: ['SAFE', 'LOCK', 'CHAIN', 'GUARD'],
+    options: ['SAFE', 'CHAIN', 'LOCK', 'GUARD'],
     correctAnswer: 'LOCK',
     explanation:
       'A padlock or door lock secures gates and vaults with mechanical tumblers, opening only when turned with the matching key or combination.',
@@ -361,7 +361,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Washed ashore at Dead Man’s Cove, a sealed glass vessel tumbles in the ocean foam. Inside, a parchment scroll rolled in crimson ribbon bobs against the glass!',
     question:
       'I have a slender neck, but no head.\nI have a hollow glass belly, but no appetite.\nI can keep a desperate secret safe for fifty years across stormy seas.\nWhat am I?',
-    options: ['VASE', 'BOTTLE', 'BARREL', 'FLASK'],
+    options: ['BOTTLE', 'VASE', 'BARREL', 'FLASK'],
     correctAnswer: 'BOTTLE',
     explanation:
       'A glass bottle has an elongated neck and hollow body, famously sealed with a cork to carry messages across oceans.',
@@ -397,7 +397,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'In the high tower of Castle Gloom, violent lightning flashes illuminate the stormy forest. Yet inside the study, not a single gust or raindrop touches the parchment!',
     question:
       'I let the bright daylight in, but keep the howling wind outside.\nI am transparent as fresh air, but hard as crystal rock.\nIf you strike me in anger, I shatter into a thousand jagged pieces.\nWhat am I?',
-    options: ['CURTAIN', 'WINDOW', 'MIRROR', 'DOOR'],
+    options: ['CURTAIN', 'MIRROR', 'DOOR', 'WINDOW'],
     correctAnswer: 'WINDOW',
     explanation:
       'A glass window pane allows sunlight into a room while insulating against rain and storms, but shatters if struck with blunt force.',
@@ -469,7 +469,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'High in the creaking bell tower, a massive flared bronze sculpture hangs motionless. But when the clock strikes twelve, a deafening ring echoes across the entire valley!',
     question:
       'I have no tongue of flesh, yet I can chime across an entire town.\nI am hollow bronze, with a heavy iron clapper inside my throat.\nI ring for joyous weddings and toll for midnight peril.\nWHAT AM I?',
-    options: ['DRUM', 'BELL', 'TRUMPET', 'GONG'],
+    options: ['BELL', 'DRUM', 'TRUMPET', 'GONG'],
     correctAnswer: 'BELL',
     explanation:
       'A bell has a hollow bronze body and an internal metal clapper (often called its tongue) that strikes its rim to produce ringing sound waves.',
@@ -505,7 +505,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'The dungeon keeper warns the recruits about a wild dancing beast kept inside the stone hearth. It devours dry logs by the crate, but a single bucket of water will kill it!',
     question:
       'Feed me dry wood and paper, and I grow furious and bright.\nGive me a cup of cold water, and I instantly choke and die.\nI have no lungs, but I crackle and dance in the stone hearth.\nWhat am I?',
-    options: ['LION', 'FIRE', 'VOLCANO', 'DRAGON'],
+    options: ['LION', 'VOLCANO', 'FIRE', 'DRAGON'],
     correctAnswer: 'FIRE',
     explanation:
       'Fire requires fuel, heat, and oxygen to undergo rapid combustion, crackling on wood but being extinguished by water.',
@@ -541,7 +541,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Scotland Yard examines the shattered jewel case. The master thief left not a single fingerprint on the velvet cushion, but dropped a curious leather item near the exit!',
     question:
       'I have four fingers and one thumb,\nbut I have no flesh, bones, or pulse of my own.\nBurglars wear me to leave no trace, and gentlemen wear me against the winter chill.\nWhat am I?',
-    options: ['SHADOW', 'GLOVE', 'SOCK', 'PUPPET'],
+    options: ['SHADOW', 'SOCK', 'PUPPET', 'GLOVE'],
     correctAnswer: 'GLOVE',
     explanation:
       'A glove has sleeves for four fingers and a thumb, worn to prevent leaving fingerprints and to insulate hands from cold weather.',
@@ -613,7 +613,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Aboard the Mary Celeste ghost ship drifting through the fog, a polished brass apparatus sits upon the binnacle, its needle steadily quivering toward the horizon.',
     question:
       'I have a spinning needle that never sews a stitch.\nI whisper nothing, yet I tell sailors where North lies.\nNo matter which way you turn, my magnetic heart points the way.\nWhat am I?',
-    options: ['CLOCK', 'COMPASS', 'WEATHERVANE', 'SUNDIAL'],
+    options: ['CLOCK', 'WEATHERVANE', 'COMPASS', 'SUNDIAL'],
     correctAnswer: 'COMPASS',
     explanation:
       'A magnetic compass uses a magnetized needle freely pivoted to align with Earth’s magnetic dipole field, pointing to magnetic North.',
@@ -649,7 +649,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'Behind the revolving bookcase in Ravenwood Castle, a spiraling flight of weathered oak leads up into the eerie belfry and down into the creepy dungeon!',
     question:
       'I go up and I go down, but I never move an inch.\nCreaking underfoot during midnight strolls,\nI lead you from the basement dungeon to the highest rooftop tower.\nWhat am I?',
-    options: ['ELEVATOR', 'STAIRS', 'LADDER', 'ESCALATOR'],
+    options: ['STAIRS', 'ELEVATOR', 'LADDER', 'ESCALATOR'],
     correctAnswer: 'STAIRS',
     explanation:
       'A flight of stairs connects architectural floors; while people walk up and down its steps, the staircase itself stays completely stationary.',
@@ -685,7 +685,7 @@ export const RIDDLES_POOL: RiddleItem[] = [
       'In a dimly lit speakeasy beneath the docks, a masked gambler slides a gleaming metallic medallion across the green felt: "Call it in the air, stranger!"',
     question:
       'I have a head, but no eyes or brain.\nI have a tail, but no body or fur.\nKings stamp their royal portraits on me, and gamblers flip me to decide their fate.\nWhat am I?',
-    options: ['LIZARD', 'COIN', 'SNAKE', 'MEDAL'],
+    options: ['LIZARD', 'SNAKE', 'MEDAL', 'COIN'],
     correctAnswer: 'COIN',
     explanation:
       'A metal currency coin has a "heads" side (portrait of monarch/leader) and a "tails" side, flipped for 50/50 chance decisions.',

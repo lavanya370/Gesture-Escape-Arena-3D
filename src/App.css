@@ -2773,7 +2773,7 @@
   position: fixed;
   bottom: 16px;
   right: 18px;
-  z-index: 9000;
+  z-index: 60;
   pointer-events: none;
   animation: hud-dock-slide 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
@@ -2784,7 +2784,7 @@
 }
 
 .webcam-hud-container {
-  pointer-events: auto;
+  pointer-events: none;
   width: 320px;
   max-width: 90vw;
   background: rgba(14, 10, 26, 0.94);
@@ -2797,6 +2797,13 @@
   backdrop-filter: blur(12px);
   overflow: hidden;
   transition: all 0.3s ease;
+}
+
+.webcam-hud-header,
+.webcam-hud-header button,
+.webcam-controls-row button,
+.hud-minimized-summary button {
+  pointer-events: auto;
 }
 
 .webcam-hud-container.minimized {

@@ -307,7 +307,7 @@
    ========================================================================= */
 .riddle-dashboard-grid {
   position: relative;
-  z-index: 5;
+  z-index: 100;
   display: grid;
   grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
   gap: 24px;
@@ -1053,6 +1053,7 @@
   user-select: none;
   text-align: left;
   position: relative;
+  z-index: 120;
   overflow: visible;
   pointer-events: auto !important;
   touch-action: manipulation !important;
@@ -2020,6 +2021,34 @@
   transform: translateY(-2px);
 }
 
+.btn-fullscreen-dare-snap {
+  height: 50px;
+  padding: 0 20px;
+  border-radius: 14px;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1.5px solid rgba(34, 211, 238, 0.5);
+  color: #a5f3fc;
+  font-family: 'Cinzel', serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
+}
+
+.btn-fullscreen-dare-snap:hover {
+  background: rgba(6, 182, 212, 0.3);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+  transform: translateY(-2px);
+}
+
 .btn-back-to-start-menu,
 .btn-celebration-continue,
 .btn-celebration-replay,
@@ -2027,6 +2056,7 @@
 .btn-fullscreen-dare-retry,
 .btn-fullscreen-dare-new,
 .btn-fullscreen-dare-exit,
+.btn-fullscreen-dare-snap,
 .btn-dare-done,
 .btn-dare-skip {
   pointer-events: auto !important;
@@ -2040,6 +2070,7 @@
 .btn-fullscreen-dare-retry > *,
 .btn-fullscreen-dare-new > *,
 .btn-fullscreen-dare-exit > *,
+.btn-fullscreen-dare-snap > *,
 .btn-dare-done > *,
 .btn-dare-skip > * {
   pointer-events: none;
@@ -2634,7 +2665,7 @@
 }
 
 .webcam-hud-container {
-  pointer-events: auto;
+  pointer-events: none;
   width: 320px;
   max-width: 90vw;
   background: rgba(14, 10, 26, 0.96);
@@ -2643,6 +2674,13 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 16px rgba(6, 182, 212, 0.2);
   backdrop-filter: blur(14px);
   overflow: hidden;
+}
+
+.webcam-hud-header,
+.webcam-hud-header button,
+.webcam-controls-row button,
+.hud-minimized-summary button {
+  pointer-events: auto;
 }
 
 .webcam-hud-container.minimized {
